@@ -1,0 +1,126 @@
+<!doctype html>
+<head>
+  <title>Popup page</title>
+  <style type="text/css">
+  	
+
+#popup {
+  position: fixed;
+  visibility: hidden;
+  z-index: 10002;
+  opacity: 0;
+  top: 50px;
+  ransform: translateY(0) scale(1);
+    transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  position: relative;
+  margin: 0 auto;
+  text-align: center;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.5);
+  width: 50%;
+  background:rgba(0,0,0,0.6);
+}
+.pic{
+        max-width: 100%;
+        max-height: 100%;
+        display: block; /* remove extra space below image */
+    }
+    .dismiss_popup{
+    	position: absolute;
+    top: 80%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    }
+  </style>
+</head>
+<body>
+  <div id="popup" class="popup_slide">
+    <a href="www.google.com"><img src="exit-intent-slide.jpg" alt="-intent-slide" class="pic"></a>
+    <button class="dismiss_popup btn-green" onclick="dismiss()">No, Thanks.</button>
+  </div>
+
+  <script>
+  	let eventListener;
+function dismiss() {
+  var x = document.getElementById("popup");
+  if (x.style.visibility === "visible") {
+    x.style.visibility = "hidden";
+  } 
+}
+  	
+
+const show = () => {
+  const element = document.querySelector("#popup");
+  element.style.visibility = "visible";
+  element.style.opacity = "1";
+  element.style.transform = "scale(1)";
+  element.style.transition = "0.4s, opacity 0.4s";
+
+  eventListener = document.addEventListener("click", function (clickEvent) {
+    let el = clickEvent.target;
+    let inPopup = false;
+    if (el.id === "popup") {
+      inPopup = true;
+    }
+    while ((el = el.parentNode)) {
+      if (el.id == "popup") {
+        inPopup = true;
+      }
+    }
+    if (!inPopup) hide();
+  });
+
+  let showed = false;
+
+const show = () => {
+  if (showed) return;
+
+  if (
+    document.cookie.split(";").filter((item) => {
+      return item.includes("popup=");
+    }).length
+  ) {
+    return;
+  } else {
+    console.log(
+      document.cookie.split(";").filter((item) => {
+        return item.includes("popup=")
+      }).length
+    )
+    console.log(document.cookie.split(";"))
+  }
+
+  document.cookie = "popup=true;path=/;max-age=15768000"
+  showed = true
+ }
+};
+
+const hide = () => {
+  const element = document.querySelector("#popup");
+  element.style.visibility = "hidden";
+  element.style.opacity = "0";
+  element.style.transform = "scale(0.5)";
+  element.style.transition = "0.2s, opacity 0.2s, visibility 0s 0.2s";
+
+  if (eventListener) {
+    document.removeEventListener(eventListener);
+  }
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("mouseout", (event) => {
+    if (!event.toElement && !event.relatedTarget) {
+      setTimeout(() => {
+        show();
+      }, 500);
+    }
+  });
+
+  document.onkeydown = (event) => {
+    event = event || window.event;
+    if (event.keyCode === 27) {
+      hide();
+    }
+  };
+});
+  </script>
+</body>
